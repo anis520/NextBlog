@@ -4,14 +4,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const { connectDb } = require("@/app/helper/db");
 
-connectDb();
-
 export async function GET(request) {
   try {
-    const token = false;
+    connectDb();
     const response = NextResponse.json({ message: "logout successfull" });
-    response.cookies.set("authToken", token, {
-      expiresIn: "0",
+    response.cookies.set("authToken", null, {
+      expiresIn: Date.now(0),
       httpOnly: true,
     });
     return response;

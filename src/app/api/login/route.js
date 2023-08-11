@@ -4,24 +4,22 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const { connectDb } = require("@/app/helper/db");
 
-connectDb();
-
 // export function post() {
 //   return NextResponse.json({ user: "anis" });
 // }
 export async function POST(request) {
   try {
+    connectDb();
     const { email, password } = await request.json();
     //   const hash = await bcrypt.hash(password, 10);
     const user = await User.findOne({ email: email });
 
-    if (user == null) {
-      throw new Error("user not found");
-    }
-
     const passwordmatch = bcrypt.compareSync(password, user.password);
     if (!passwordmatch) {
       throw new Error("Password not match");
+    }
+    if (user == null) {
+      throw new Error("user not found");
     }
 
     const token = jwt.sign(

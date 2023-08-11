@@ -16,15 +16,36 @@ import {
 import Router from "next/router";
 
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
-import { logout } from "@/app/service/userService";
+import { logout, me } from "@/app/service/userService";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
-  const handlelogout = async () => {
-    await logout();
-    route.push("/login");
-  };
   const route = useRouter();
+  const [user, setuser] = useState();
+
+  useEffect(() => {
+    try {
+      (async () => {
+        const getme = await me();
+        // console.log(getme + "done5454");
+
+        console.log(getme.resut);
+        localStorage.setItem("userinfo", JSON.stringify(getme.resut));
+      })();
+    } catch (error) {
+      console.log(error.response.message);
+    }
+  }, []);
+
+  const handlelogout = async () => {
+    try {
+      await logout();
+      route.push("/login");
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
 
   return (
     <div className="w-20 bg-indigo-400 h-screen text-white flex flex-col  justify-center items-center gap-4 fixed top-0 left-0">
@@ -41,12 +62,14 @@ const Navbar = () => {
           </p>
         </div>
       </Link>
-      <div className="h-10 w-10  flex group relative items-center justify-center hover:bg-white hover:text-gray-500 rounded-md duration-100 cursor-pointer">
-        <MdAccountBox className="text-3xl " />
-        <p className="absolute top-2 hidden group-hover:block  left-16 bg-slate-500 font-semibold text-sm w-16 rounded-md text-center  py-1 text-white">
-          Profile
-        </p>
-      </div>
+      <Link href="/profile">
+        <div className="h-10 w-10  flex group relative items-center justify-center hover:bg-white hover:text-gray-500 rounded-md duration-100 cursor-pointer">
+          <MdAccountBox className="text-3xl " />
+          <p className="absolute top-2 hidden group-hover:block  left-16 bg-slate-500 font-semibold text-sm w-16 rounded-md text-center  py-1 text-white">
+            Profile
+          </p>
+        </div>
+      </Link>
       <div className="h-10 relative w-10 group flex items-center justify-center hover:bg-white hover:text-gray-500 rounded-md duration-100 cursor-pointer">
         <p className="absolute top-2 hidden group-hover:block  left-16 bg-slate-500 font-semibold text-sm w-24 rounded-md text-center  p-1  text-white">
           Notifications

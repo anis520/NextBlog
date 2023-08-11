@@ -22,6 +22,7 @@ const page = () => {
           name: input.name,
           email: input.email,
           password: input.password,
+          role: "user",
         });
         console.log(data);
         toast.success(data.message);
